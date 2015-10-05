@@ -6,21 +6,21 @@ require(data.table)
 require(dplyr)
 
 #rnaseq
-rnaseqObj <- synGet('syn4921702')
-expr <- fread(rnaseqObj@filePath,data.table=F)
+rnaseqObj <- synGet('syn4921702',downloadLocation='/shared/MSSM/')
+expr <- fread(rnaseqObj@filePath,data.table=F,stringsAsFactors = F)
 
 
 #covariates
-covariatesObj <- synGet('syn4921703')
-covariates <- fread(covariatesObj@filePath,data.table=F)
+covariatesObj <- synGet('syn4921703',downloadLocation = '/shared/MSSM/')
+covariates <- fread(covariatesObj@filePath,data.table=F, stringsAsFactors = F)
 
 #break into three unique tissue types
 #TISSUE=Brain regions (BM10=Frontal Pole; BM22=Superior Temporal Gyrus; BM36=Parahippocampal Gyrus)
 
 #frontal pole
-covFP <- filter(covariates,TISSUE=='BM_10')
-covSTG <- filter(covariates,TISSUE=='BM_22')
-covPHG <- filter(covariates,TISSUE=='BM_36')
+covFP <- dplyr::filter(covariates,TISSUE=='BM_10')
+covSTG <- dplyr::filter(covariates,TISSUE=='BM_22')
+covPHG <- dplyr::filter(covariates,TISSUE=='BM_36')
 
 ###merge data
 
@@ -30,29 +30,41 @@ expr2 <- cbind(rownames(expr2),expr2)
 colnames(expr2)[1] <- 'sampleId'
 gc()
 
-fpData <- merge(covFP,expr2,by.x = "Sample.ID", by.y = "sampleId" )
-row.names(fpData) <- fpData$Sample.ID
+fpData <- merge(covFP,expr2,by.x = "Sample.ID", by.y = "sampleId")
 stgData <- merge(covSTG,expr2,by.x = "Sample.ID", by.y = "sampleId")
-row.names(stgData) <- stgData$Sample.ID
 phgData <- merge(covPHG,expr2,by.x = "Sample.ID", by.y = "sampleId")
-row.names(phgData) <- phgData$Sample.ID
 
+gc()
+
+dataMat <- list()
+require(dplyr)
 ###write files with cdr cutpoint
-fpDataControl <- filter(fpData,CDR %in% c('0','0.5','1'))
-fpDataCase <- filter(fpData,CDR %in% c('2','3','4','5'))
+dataMat$fpDataControl <- dplyr::filter(fpData,CDR %in% c('0','0.5','1'))
+rownames(dataMat$fpDataControl) <- dataMat$fpDataControl$Sample.ID
+dataMat$fpDataCase <- dplyr::filter(fpData,CDR %in% c('2','3','4','5'))
+rownames(dataMat$fpDataCase) <- dataMat$fpDataCase$Sample.ID
 
-stgDataControl <- filter(stgData,CDR %in% c('0','0.5','1'))
-stgDataCase <- filter(stgData,CDR %in% c('2','3','4','5'))
+dataMat$stgDataControl <- dplyr::filter(stgData,CDR %in% c('0','0.5','1'))
+rownames(dataMat$stgDataControl) <- dataMat$stgDataControl$Sample.ID
+dataMat$stgDataCase <- dplyr::filter(stgData,CDR %in% c('2','3','4','5'))
+rownames(dataMat$stgDataCase) <- dataMat$stgDataCase$Sample.ID
 
-phgDataControl <- filter(phgData,CDR %in% c('0','0.5','1'))
-phgDataCase <- filter(phgData,CDR %in% c('2','3','4','5'))
+dataMat$phgDataControl <- dplyr::filter(phgData,CDR %in% c('0','0.5','1'))
+rownames(dataMat$phgDataControl) <- dataMat$phgDataControl$Sample.ID
+dataMat$phgDataCase <- dplyr::filter(phgData,CDR %in% c('2','3','4','5'))
+rownames(dataMat$phgDataCase) <- dataMat$phgDataCase$Sample.ID
 
 
-write.csv(fpDataCase %>% select(starts_with("ENSG")),file='fpCase.csv',quote = F)
-write.csv(fpDataControl %>% select(starts_with("ENSG")),file='fpControl.csv',quote = F)
-write.csv(stgDataCase %>% select(starts_with("ENSG")),file='stgCase.csv',quote = F)
-write.csv(stgDataControl %>% select(starts_with("ENSG")),file='stgControl.csv',quote = F)
-write.csv(phgDataCase %>% select(starts_with("ENSG")),file='phgCase.csv',quote = F)
-write.csv(phgDataControl %>% select(starts_with("ENSG")),file='phgControl.csv',quote = F)
+dataMat <- lapply(dataMat,function(x) { return(dplyr::select(x,starts_with("ENSG")))})
+dataMat <- lapply(dataMat,as.matrix)
+dataMat <- lapply(dataMat,function(x){return(apply(x,2,as.numeric))})
+dataMat <- lapply(dataMat,scale)
+
+write.csv(dataMat$fpDataCase ,file='fpCase.csv',quote = F)
+write.csv(dataMat$fpDataControl,file='fpControl.csv',quote = F)
+write.csv(dataMat$stgDataCase,file='stgCase.csv',quote = F)
+write.csv(dataMat$stgDataControl,file='stgControl.csv',quote = F)
+write.csv(dataMat$phgDataCase,file='phgCase.csv',quote = F)
+write.csv(dataMat$phgDataControl,file='phgControl.csv',quote = F)
 
 
