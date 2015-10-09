@@ -12,4 +12,3 @@ echo "https://github.com/blogsdon/MSSM/blob/master/runMSSMphgCase.sh" >> codePhg
 
 cd /shared/metanetworkSynapse/
 qsub -v s3="s3://metanetworks/MSSM/PHG/CDR2_5/",dataFile="/shared/MSSM/phgCase.csv",pathv="/shared/metanetworkSynapse/",sparrowZ=1,sparrow2Z=1,lassoCV1se=1,lassoCVmin=1,lassoAIC=1,lassoBIC=1,ridgeCV1se=1,ridgeCVmin=1,ridgeAIC=1,ridgeBIC=1,genie3=1,tigressRootN=1,elasticNetAIC=1,elasticNetBIC=1,elasticNetCVmin=1,elasticNetCV1se=1,numberCore=319,outputpath="/shared/MSSM/PHG/CDR2_5/" -pe orte 319 -S /bin/bash -V -cwd -N phgCase -e /shared/MSSM/PHG/CDR2_5/error.txt -o /shared/MSSM/PHG/CDR2_5/out.txt buildNet.sh
-#qsub -v s3="s3://metanetworks/MSSM/PHG/CDR2_5/",dataFile="/shared/MSSM/phgCase.csv",pathv="/shared/metanetworkSynapse/",ridgeCV1se=1,ridgeCVmin=1,ridgeAIC=1,genie3=1,tigressRootN=1,elasticNetAIC=1,elasticNetBIC=1,elasticNetCVmin=1,elasticNetCV1se=1,numberCore=319,outputpath="/shared/MSSM/PHG/CDR2_5/" -pe orte 319 buildNet.sh
