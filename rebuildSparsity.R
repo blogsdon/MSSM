@@ -37,8 +37,8 @@ generateSparsity <- function(method,brainRegion,diseaseState){
 
 
 method_list <- scan('methods.txt',what='character')
-brainRegion <- c('FP','FP','STG','STG','PHG','PHG')
-diseaseState <- c('CDR0_1','CDR2_5','CDR0_1','CDR2_5','CDR0_1','CDR2_5')
+brainRegion <- c('STG','PHG','PHG')
+diseaseState <- c('CDR2_5','CDR0_1','CDR2_5')
 for (i in 1:6){
   sapply(method_list,generateSparsity,brainRegion[i],diseaseState[i])
   str2 <- paste0('aws s3 mv ./sparsity.csv s3://metanetworks/MSSM/',brainRegion[i],'/',diseaseState[i],'/')
