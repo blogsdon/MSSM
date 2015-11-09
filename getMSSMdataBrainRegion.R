@@ -44,35 +44,3 @@ write.csv(stgData[,-c(1:10)],file='stgMSSMrna.csv',quote=F)
 write.csv(phgData[,-c(1:10)],file='phgMSSMrna.csv',quote=F)
 
 
-dataMat <- list()
-require(dplyr)
-###write files with cdr cutpoint
-dataMat$fpDataControl <- dplyr::filter(fpData,CDR %in% c('0','0.5','1'))
-rownames(dataMat$fpDataControl) <- dataMat$fpDataControl$Sample.ID
-dataMat$fpDataCase <- dplyr::filter(fpData,CDR %in% c('2','3','4','5'))
-rownames(dataMat$fpDataCase) <- dataMat$fpDataCase$Sample.ID
-
-dataMat$stgDataControl <- dplyr::filter(stgData,CDR %in% c('0','0.5','1'))
-rownames(dataMat$stgDataControl) <- dataMat$stgDataControl$Sample.ID
-dataMat$stgDataCase <- dplyr::filter(stgData,CDR %in% c('2','3','4','5'))
-rownames(dataMat$stgDataCase) <- dataMat$stgDataCase$Sample.ID
-
-dataMat$phgDataControl <- dplyr::filter(phgData,CDR %in% c('0','0.5','1'))
-rownames(dataMat$phgDataControl) <- dataMat$phgDataControl$Sample.ID
-dataMat$phgDataCase <- dplyr::filter(phgData,CDR %in% c('2','3','4','5'))
-rownames(dataMat$phgDataCase) <- dataMat$phgDataCase$Sample.ID
-
-
-dataMat <- lapply(dataMat,function(x) { return(dplyr::select(x,starts_with("ENSG")))})
-dataMat <- lapply(dataMat,as.matrix)
-dataMat <- lapply(dataMat,function(x){return(apply(x,2,as.numeric))})
-dataMat <- lapply(dataMat,scale)
-
-write.csv(dataMat$fpDataCase ,file='fpCase.csv',quote = F)
-write.csv(dataMat$fpDataControl,file='fpControl.csv',quote = F)
-write.csv(dataMat$stgDataCase,file='stgCase.csv',quote = F)
-write.csv(dataMat$stgDataControl,file='stgControl.csv',quote = F)
-write.csv(dataMat$phgDataCase,file='phgCase.csv',quote = F)
-write.csv(dataMat$phgDataControl,file='phgControl.csv',quote = F)
-
-
