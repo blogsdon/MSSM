@@ -1,0 +1,7 @@
+#!/bin/bash
+
+qsub -v s3="s3://metanetworks/MSSM/FP/",dataFile="/shared/MSSM/fpMSSMrna.csv",pathv="/shared/metanetworkSynapse/",sparrowZ=1,sparrow2Z=1,lassoCV1se=1,lassoCVmin=1,lassoAIC=1,lassoBIC=1,ridgeCV1se=1,ridgeCVmin=1,ridgeAIC=1,genie3=1,tigressRootN=1,elasticNetAIC=1,elasticNetBIC=1,elasticNetCVmin=1,elasticNetCV1se=1,numberCore=319,outputpath="/shared/MSSM/FP/" -pe orte 319 -S /bin/bash -V -cwd -N fp -e /shared/MSSM/FP/error.txt -o /shared/MSSM/FP/out.txt /shared/metanetworkSynapse/buildNet.sh
+
+qsub -v s3="s3://metanetworks/MSSM/STG/",dataFile="/shared/MSSM/stgMSSMrna.csv",pathv="/shared/metanetworkSynapse/",sparrowZ=1,sparrow2Z=1,lassoCV1se=1,lassoCVmin=1,lassoAIC=1,lassoBIC=1,ridgeCV1se=1,ridgeCVmin=1,ridgeAIC=1,genie3=1,tigressRootN=1,elasticNetAIC=1,elasticNetBIC=1,elasticNetCVmin=1,elasticNetCV1se=1,numberCore=319,outputpath="/shared/MSSM/STG/" -pe orte 319 -S /bin/bash -V -cwd -N stg -e /shared/MSSM/STG/error.txt -o /shared/MSSM/STG/out.txt /shared/metanetworkSynapse/buildNet.sh
+
+qsub -v s3="s3://metanetworks/MSSM/PHG/",dataFile="/shared/MSSM/phgMSSMrna.csv",pathv="/shared/metanetworkSynapse/",sparrowZ=1,sparrow2Z=1,lassoCV1se=1,lassoCVmin=1,lassoAIC=1,lassoBIC=1,ridgeCV1se=1,ridgeCVmin=1,ridgeAIC=1,genie3=1,tigressRootN=1,elasticNetAIC=1,elasticNetBIC=1,elasticNetCVmin=1,elasticNetCV1se=1,numberCore=319,outputpath="/shared/MSSM/PHG/" -pe orte 319 -S /bin/bash -V -cwd -N phg -e /shared/MSSM/PHG/error.txt -o /shared/MSSM/PHG/out.txt /shared/metanetworkSynapse/buildNet.sh
